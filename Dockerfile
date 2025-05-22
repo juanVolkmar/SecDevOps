@@ -1,4 +1,4 @@
-FROM python:3.9.0-slim  # actualizar imagen
+FROM python:3.9.0-slim  #python:3.10-slim
 
 WORKDIR /app
 
