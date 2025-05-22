@@ -1,0 +1,5 @@
+flask
+requests==2.19.1  # <- versión vulnerable (CVE-2018-18074)
+pytest
+bandit
+pip-audit
