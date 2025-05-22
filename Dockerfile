@@ -1,4 +1,4 @@
-FROM python:3.9.0-slim  # Imagen antigua con vulnerabilidades
+FROM python:3.9.0-slim  # actualizar imagen
 
 WORKDIR /app
 

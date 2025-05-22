@@ -7,4 +7,4 @@ def home():
     return "¡Hola, SecDevOps!"  #SecDevOps
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0') #host='0.0.0.0'
