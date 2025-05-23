@@ -36,15 +36,15 @@ jobs:
             - name: Set up Docker
               uses: docker/setup-buildx-action@v3
 
-            - name: Build Docker image
-              run: docker build -t hello-secdevops:latest .
+            - name: Build Docker Image
+              run: docker build -f Dockerfile -t myapp:latest .
 
             - name: Docker Scout Scan
               uses: docker/scout-action@v1.0.9
               with:
                 dockerhub-user: ${{ secrets.REPO_USER }}
                 dockerhub-password: ${{ secrets.REPO_PWD }}
-                image: hello-secdevops:latest
+                image: myapp:latest
                 command: quickview,cves
                 only-severities: critical,high
                 sarif-file: scout-report.sarif
