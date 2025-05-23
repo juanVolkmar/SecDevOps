@@ -45,6 +45,7 @@ jobs:
             echo ${{ secrets.REPO_PWD }} | docker login -u ${{ secrets.REPO_USER }} --password-stdin
             docker scout cves --format json > scout-cves-report.json
             HIGH_OR_CRITICAL=$(jq '[.results[].vulnerabilities[] | select(.severity == "high" or .severity == "critical")] | length' scout-cves-report.json)
+            echo "Vulnerabilidades altas o críticas encontradas: $HIGH_OR_CRITICAL"
 
       - name: Upload Docker Scout CVEs report
         uses: actions/upload-artifact@v4
