@@ -48,10 +48,10 @@ jobs:
             critical_count=$(echo "$scout_output" | grep -i 'CRITICAL' | wc -l)
             high_count=$(echo "$scout_output" | grep -i 'HIGH' | wc -l)
             if [ "$critical_count" -gt 1 ] || [ "$high_count" -gt 1 ]; then
-                echo "Se encontraron vulnerabilidades críticas o altas."
+                echo " "
                 exit 1
             else
-                echo "No se encontraron vulnerabilidades críticas ni altas."
+                echo " "
             fi
 
       - name: Upload Bandit report
