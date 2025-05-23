@@ -61,7 +61,7 @@ jobs:
               with:
                 dockerhub-user: ${{ secrets.REPO_USER }}
                 dockerhub-password: ${{ secrets.REPO_PWD }}
-                image: myapp:latest
+                image: hello-secdevops:latest
                 command: quickview,cves
                 only-severities: critical,high
                 sarif-file: scout-report.sarif
