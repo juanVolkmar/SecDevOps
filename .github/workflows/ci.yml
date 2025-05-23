@@ -36,8 +36,25 @@ jobs:
             - name: Set up Docker
               uses: docker/setup-buildx-action@v3
 
-            - name: Build Docker Image
-              run: docker build -f Dockerfile -t myapp:latest .
+            - name: build image
+              run: docker build -t hello-secdevops:latest .
+
+            - name: save image            
+              run: docker save hello-secdevops:latest -o hello-secdevops.tar
+
+            - name: Upload image            
+              uses: actions/upload-artifact@v4
+              with:
+                name: docker-image
+                path: hello-secdevops.tar
+
+            - name: download image
+              uses: actions/download-artifact@v4
+              with:
+                name: docker-image
+
+            - name: load image
+              run: docker load -i hello-secdevops.tar
 
             - name: Docker Scout Scan
               uses: docker/scout-action@v1.0.9
@@ -69,10 +86,3 @@ jobs:
               with:
                   name: pip-audit-report
                   path: reports/pip-audit-report.json
-
-            - name: Upload Docker Scout report
-              uses: actions/upload-artifact@v4
-              if: always()
-              with:
-                  name: scout-report
-                  path: reports/scout-report.json
