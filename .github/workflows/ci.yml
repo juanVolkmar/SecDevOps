@@ -3,7 +3,7 @@ name: SecDevOps
 on: [push]
 
 jobs:
-  build-and-test:
+  full-scan:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,36 +32,13 @@ jobs:
       - name: pip-audit
         run: pip-audit -f json -o reports/pip-audit-report.json
 
-      - name: Upload reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: secdevops-reports
-          path: reports/
-
-      - name: Upload source for image scan
-        uses: actions/upload-artifact@v4
-        with:
-          name: source-code
-          path: ./
-
-  docker-scout-scan:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download source
-        uses: actions/download-artifact@v4
-        with:
-          name: source-code
-          path: ./app
-
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
-        run: docker build -t hello-secdevops:latest ./app
+        run: docker build -t hello-secdevops:latest .
 
-      - name: Docker Scout Scan
+      - name: Docker Scout scan
         uses: docker/scout-action@v1.0.9
         with:
           dockerhub-user: ${{ secrets.REPO_USER }}
@@ -76,3 +53,15 @@ jobs:
         with:
           name: docker-scout-report
           path: scout-report.sarif
+
+      - name: Upload Bandit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: reports/bandit-report.json
+
+      - name: Upload pip-audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-audit-report
+          path: reports/pip-audit-report.json
