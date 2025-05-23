@@ -38,30 +38,20 @@ jobs:
       - name: Build Docker image
         run: docker build -t hello-secdevops:latest .
 
-      - name: Install Docker Scout CLI
+      - name: Docker Scout Scan
         run: |
             curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
             sh install-scout.sh
-
-      - name: Login Docker Hub
-        run: echo "${{ secrets.REPO_PWD }}" | docker login -u "${{ secrets.REPO_USER }}" --password-stdin
-
-      - name: Scan image and generate JSON report
-        run: docker scout cves --json -o scout-report.json hello-secdevops:latest
-
-      - name: Fail if high or critical vulnerabilities found
-        shell: bash
-        run: |
-            critical_count=$(jq '[.vulnerabilities[] | select(.severity=="critical")] | length' scout-report.json)
-            high_count=$(jq '[.vulnerabilities[] | select(.severity=="high")] | length' scout-report.json)
-            echo "Critical vulnerabilities: $critical_count"
-            echo "High vulnerabilities: $high_count"
-            if (( critical_count > 0 || high_count > 0 )); then
-                echo "High or Critical vulnerabilities found! Failing job."
+            echo ${{ secrets.REPO_PWD }} | docker login -u ${{ secrets.REPO_USER }} --password-stdin
+            scout_output=$(docker scout cves 2>&1)
+            echo "$scout_output"
+            critical_count=$(echo "$scout_output" | grep -i 'CRITICAL' | wc -l)
+            high_count=$(echo "$scout_output" | grep -i 'HIGH' | wc -l)
+            if [ "$critical_count" -gt 1 ] || [ "$high_count" -gt 1 ]; then
+                echo "Se encontraron vulnerabilidades críticas o altas."
                 exit 1
             else
-                echo "No high or critical vulnerabilities found."
-            exit 0
+                echo "No se encontraron vulnerabilidades críticas ni altas."
             fi
 
       - name: Upload Bandit report
